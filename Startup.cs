@@ -33,6 +33,9 @@ namespace NewsProject
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+            var section = Configuration.GetSection("ServiceSettings");
+            services.Configure<ServiceSettings>(section);
+
             services.AddIdentityServer()
                 .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 

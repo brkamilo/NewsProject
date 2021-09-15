@@ -7,11 +7,12 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace NewsProject.Business
 {
     public class WebRequestAPI
-    {       
+    {
         public ArticlesResult GetNewsRequest(string city, string APIKey)
         {
             var newsApiClient = new NewsApiClient(APIKey);
@@ -21,7 +22,8 @@ namespace NewsProject.Business
                 SortBy = SortBys.Popularity,
                 Language = Languages.EN,
                 From = new DateTime(2021, 8, 25)
-            });       
+            });
+            SaveFile(city);
             return articlesResponse;
         }
 
@@ -55,5 +57,40 @@ namespace NewsProject.Business
                 return "Error " + ex.Message;
             }
         }
+        public void SaveFile(string line)
+        {
+            var path = Path.Combine("history", "history.txt");
+            if (!Directory.Exists("History"))
+            {
+                Directory.CreateDirectory("History");
+            }
+            if (!File.Exists(path))
+            {
+                 File.Create(path);
+            }
+
+            using (StreamWriter sw = new StreamWriter(path, append: true))
+            {
+                sw.WriteLineAsync(line);
+            }
+        }
+
+        public List<string> ReadFile()
+        {
+            List<string> Cities = new List<string>();
+            var path = Path.Combine("history", "history.txt");
+            using (StreamReader sr = File.OpenText(path))
+            {
+                string line = string.Empty;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Cities.Add(line);
+                }
+            }
+            return Cities;
+
+        }
+
+
     }
 }
